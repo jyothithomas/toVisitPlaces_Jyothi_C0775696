@@ -123,7 +123,6 @@ class EditPlacesViewController: UIViewController, MKMapViewDelegate {
       
             let pinAnnotation = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "marker")
                     pinAnnotation.tintColor = .blue
-    //                pinAnnotation.glyphTintColor = .white
                     pinAnnotation.isDraggable = true
                     pinAnnotation.canShowCallout = true
                     pinAnnotation.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)

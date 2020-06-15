@@ -327,7 +327,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                             pinAnnotation.markerTintColor = .blue
                             pinAnnotation.glyphTintColor = .white
                             pinAnnotation.canShowCallout = true
-                    
                             button.setImage(UIImage(systemName: "heart.fill"), for: .normal)
                             button.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
                             pinAnnotation.rightCalloutAccessoryView = button
