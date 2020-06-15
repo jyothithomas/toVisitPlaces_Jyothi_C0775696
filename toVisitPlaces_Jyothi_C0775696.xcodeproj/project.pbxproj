@@ -13,6 +13,7 @@
 		2ECAF9442497C65900A6AEAA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2ECAF9422497C65900A6AEAA /* Main.storyboard */; };
 		2ECAF9462497C65B00A6AEAA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2ECAF9452497C65B00A6AEAA /* Assets.xcassets */; };
 		2ECAF9492497C65B00A6AEAA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2ECAF9472497C65B00A6AEAA /* LaunchScreen.storyboard */; };
+		2EE9C46D249835BF007F259C /* EditPlacesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE9C46C249835BF007F259C /* EditPlacesViewController.swift */; };
 		2EFF92B424980E0C005808FA /* Places.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF92B324980E0C005808FA /* Places.swift */; };
 		2EFF92B624980EC3005808FA /* VisitPlacesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF92B524980EC3005808FA /* VisitPlacesTableViewController.swift */; };
 /* End PBXBuildFile section */
@@ -26,6 +27,7 @@
 		2ECAF9452497C65B00A6AEAA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2ECAF9482497C65B00A6AEAA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2ECAF94A2497C65B00A6AEAA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2EE9C46C249835BF007F259C /* EditPlacesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPlacesViewController.swift; sourceTree = "<group>"; };
 		2EFF92B324980E0C005808FA /* Places.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Places.swift; sourceTree = "<group>"; };
 		2EFF92B524980EC3005808FA /* VisitPlacesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisitPlacesTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -69,6 +71,7 @@
 				2ECAF94A2497C65B00A6AEAA /* Info.plist */,
 				2EFF92B324980E0C005808FA /* Places.swift */,
 				2EFF92B524980EC3005808FA /* VisitPlacesTableViewController.swift */,
+				2EE9C46C249835BF007F259C /* EditPlacesViewController.swift */,
 			);
 			path = toVisitPlaces_Jyothi_C0775696;
 			sourceTree = "<group>";
@@ -144,6 +147,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2EE9C46D249835BF007F259C /* EditPlacesViewController.swift in Sources */,
 				2EFF92B424980E0C005808FA /* Places.swift in Sources */,
 				2ECAF9412497C65900A6AEAA /* ViewController.swift in Sources */,
 				2EFF92B624980EC3005808FA /* VisitPlacesTableViewController.swift in Sources */,

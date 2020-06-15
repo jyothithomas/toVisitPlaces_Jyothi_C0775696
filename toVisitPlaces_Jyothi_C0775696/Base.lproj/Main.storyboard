@@ -59,6 +59,35 @@
             </objects>
             <point key="canvasLocation" x="217" y="129"/>
         </scene>
+        <!--Edit Places View Controller-->
+        <scene sceneID="Ndb-rh-Maj">
+            <objects>
+                <viewController storyboardIdentifier="editVC" id="VBi-Cf-fXZ" customClass="EditPlacesViewController" customModule="toVisitPlaces_Jyothi_C0775696" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="B32-cw-vh1">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="WdE-l0-13Z">
+                                <rect key="frame" x="20" y="85" width="374" height="726"/>
+                            </mapView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="WdE-l0-13Z" firstAttribute="leading" secondItem="B32-cw-vh1" secondAttribute="leadingMargin" id="I17-Ka-oNX"/>
+                            <constraint firstItem="WdE-l0-13Z" firstAttribute="top" secondItem="6c2-3u-YjQ" secondAttribute="top" constant="41" id="fjT-2d-SYR"/>
+                            <constraint firstItem="WdE-l0-13Z" firstAttribute="centerX" secondItem="B32-cw-vh1" secondAttribute="centerX" id="qjh-bp-5SF"/>
+                            <constraint firstItem="WdE-l0-13Z" firstAttribute="centerY" secondItem="B32-cw-vh1" secondAttribute="centerY" id="wTj-Eo-z1Q"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="6c2-3u-YjQ"/>
+                    </view>
+                    <connections>
+                        <outlet property="editMap" destination="WdE-l0-13Z" id="fYf-3o-lCA"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="KGx-Q8-SlU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="208.69565217391306" y="790.84821428571422"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>

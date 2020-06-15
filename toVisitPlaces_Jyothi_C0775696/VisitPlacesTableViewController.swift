@@ -99,15 +99,12 @@ class VisitPlacesTableViewController: UITableViewController {
         }
         
         override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            
             let editedPlace =  self.places![indexPath.row]
-            
             defaults.set(editedPlace.placeLat, forKey: "latitude")
             defaults.set(editedPlace.placeLong, forKey: "longitude")
             defaults.set(true, forKey: "bool")
-            
-            let mapVC = self.storyboard?.instantiateViewController(withIdentifier: "mapViewController") as! ViewController
-            mapVC.dragablePin()
+            defaults.set(indexPath.row, forKey: "edit")
+            let mapVC = self.storyboard?.instantiateViewController(withIdentifier: "editVC") as! EditPlacesViewController
             self.navigationController?.pushViewController(mapVC, animated: true)
         }
 
