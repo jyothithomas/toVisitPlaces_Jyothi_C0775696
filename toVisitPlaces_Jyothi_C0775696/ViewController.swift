@@ -343,7 +343,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                         }
                     
                             let pinAnnotation = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "marker")
-                            pinAnnotation.markerTintColor = .systemPink
+                            pinAnnotation.markerTintColor = .blue
                             pinAnnotation.glyphTintColor = .white
                             pinAnnotation.canShowCallout = true
                     
@@ -357,7 +357,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 
             func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
                  let alertController = UIAlertController(title: "Add to Favourites", message:
-                    "Do you want to add marked Location to favourites?", preferredStyle: .actionSheet)
+                    "Do you want to add to favourites?", preferredStyle: .actionSheet)
                 alertController.addAction(UIAlertAction(title: "Yes", style:  .default, handler: { (UIAlertAction) in
                     self.geocode()
                     
