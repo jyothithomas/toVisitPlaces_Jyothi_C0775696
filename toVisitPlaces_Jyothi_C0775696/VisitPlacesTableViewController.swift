@@ -9,6 +9,11 @@
 import UIKit
 
 class VisitPlacesTableViewController: UITableViewController {
+    
+    var places : [Places]?
+    var deleteArray : [Places]?
+    let defaults = UserDefaults.standard
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()

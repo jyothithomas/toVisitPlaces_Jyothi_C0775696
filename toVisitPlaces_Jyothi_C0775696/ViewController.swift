@@ -10,6 +10,9 @@ import UIKit
 import MapKit
 
 class ViewController: UIViewController, CLLocationManagerDelegate {
+    var destinationCoordinates : CLLocationCoordinate2D!
+    let destCoordinate = MKDirections.Request()
+    let button = UIButton()
     @IBOutlet weak var btnGo: UIButton!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var btnZoomin: UIButton!
@@ -17,28 +20,29 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var segmentWay: UISegmentedControl!
     @IBOutlet weak var btnZoomotu: UIButton!
     
-   var aLat: CLLocationDegrees??
-        var aLon: CLLocationDegrees??
-        var location: CLLocation?
-        
-            override func viewDidLoad() {
+         var aLat: CLLocationDegrees??
+         var aLon: CLLocationDegrees??
+         var location: CLLocation?
+         var places:[Places]?
+           let defaults = UserDefaults.standard
+           var lat : Double = 0.0
+           var long : Double = 0.0
+           var drag : Bool? = false
+    override func viewDidLoad() {
                 super.viewDidLoad()
                 
-                mapView.delegate = self
-                locationManager.delegate = self
-                
-                //Permission and finding inital location
-                locationManager.requestWhenInUseAuthorization()
-                locationManager.desiredAccuracy = kCLLocationAccuracyBest
-                locationManager.distanceFilter = kCLDistanceFilterNone
-                locationManager.startUpdatingLocation()
-                
-                //Map interactivity
-                mapView.showsUserLocation = true
                 mapView.isZoomEnabled = false
-                
-                //Added double tap gesture
-                addDoubleTap()
+                       mapView.delegate = self
+                       locationManager.delegate = self
+                       locationManager.desiredAccuracy = kCLLocationAccuracyBest
+                       locationManager.requestWhenInUseAuthorization()
+                       locationManager.startUpdatingLocation()
+                       
+                       let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(recognizer:)))
+                              tap.numberOfTapsRequired = 2
+                              mapView.addGestureRecognizer(tap)
+                       
+                       loadData()
                 
           }
             func addDoubleTap()
@@ -49,14 +53,110 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             }
         
             
-            func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
-            {
-                //Getting user location
-                location = locations.first!
-                let coordinateRegion = MKCoordinateRegion(center: location!.coordinate, latitudinalMeters: 1000, longitudinalMeters:1000)
-                mapView.setRegion(coordinateRegion, animated: true)
-                locationManager.stopUpdatingLocation()
-            }
+            func dragablePin(){
+                    self.lat = defaults.double(forKey: "latitude")
+                    self.long = defaults.double(forKey: "longitude")
+                    
+                    self.drag = defaults.bool(forKey: "bool")
+                    
+                    let annotation = MKPointAnnotation()
+                    annotation.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long )
+                    print(lat, long)
+                    mapView.addAnnotation(annotation)
+                }
+                
+                
+                
+                func getDataFilePath() -> String {
+                       let documentPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+                       let filePath = documentPath.appending("/places-data.txt")
+                       return filePath
+                   }
+                
+                func loadData() {
+                    places = [Places]()
+                    
+                    let filePath = getDataFilePath()
+                    
+                    if FileManager.default.fileExists(atPath: filePath){
+                        do{
+                            //creating string of file path
+                         let fileContent = try String(contentsOfFile: filePath)
+                            
+                            let contentArray = fileContent.components(separatedBy: "\n")
+                            for content in contentArray{
+                               
+                                let placeContent = content.components(separatedBy: ",")
+                                if placeContent.count == 6 {
+                                    let place = Places(placeLat: Double(placeContent[0]) ?? 0.0, placeLong: Double(placeContent[1]) ?? 0.0, placeName: placeContent[2], city: placeContent[3], postalCode: placeContent[4], country: placeContent[5])
+                                    places?.append(place)
+                                }
+                            }
+            //                print(places?.count)
+                        }
+                        catch{
+                            print(error)
+                        }
+                    }
+                }
+                
+                 override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+                        if let placeListVC = segue.destination as? VisitPlacesTableViewController{
+                            placeListVC.places = self.places
+                        }
+                    }
+                
+                 
+                func saveData() {
+                     let filePath = getDataFilePath()
+
+                     var saveString = ""
+                     for place in places!{
+                        saveString = "\(saveString)\(place.placeLat),\(place.placeLong),\(place.placeName),\(place.city),\(place.country),\(place.postalCode)\n"
+                         do{
+                        try saveString.write(toFile: filePath, atomically: true, encoding: .utf8)
+                         }
+                         catch{
+                             print(error)
+                         }
+                     }
+                 }
+                
+                 @objc func handleTap(recognizer: UITapGestureRecognizer) {
+                        
+                       let mapAnnotations  = self.mapView.annotations
+                       self.mapView.removeAnnotations(mapAnnotations)
+                       let tapLocation = recognizer.location(in: mapView)
+                        self.destinationCoordinates = mapView.convert(tapLocation, toCoordinateFrom: mapView)
+                           
+                           
+                           if recognizer.state == .ended
+                           {
+                               
+                                let annotation = MKPointAnnotation()
+                                annotation.coordinate = self.destinationCoordinates!
+                                annotation.title = "Your destination"
+                                self.mapView.addAnnotation(annotation)
+                           }
+                       }
+
+                func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+                           let userLocation = locations[0]
+                           
+                           let latitude = userLocation.coordinate.latitude
+                           let longitude = userLocation.coordinate.longitude
+                            
+                           let latDelta: CLLocationDegrees = 0.05
+                           let longDelta: CLLocationDegrees = 0.05
+                            
+                            // 3 - Creating the span, location coordinate and region
+                           let span = MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: longDelta)
+                           let customLocation = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                           let region = MKCoordinateRegion(center: customLocation, span: span)
+                                  
+                            // 4 - assign region to map
+                           mapView.setRegion(region, animated: true)
+                        }
         
             @objc func doubleTapped(sender: UITapGestureRecognizer)
             {
@@ -83,12 +183,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 
                 self.mapView.addAnnotation(annotation)
             }
-        
-                @IBAction func indexChanged(_ sender: Any) {
-                //Controlling method of transport
-                routeMapping()
-
-                }
                 
                 @IBAction func findMyWay(_ sender: Any) {
                 //Calculating route
@@ -152,7 +246,52 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 }
             }
         }
-        //Adding overlays
+    func geocode()  {
+            CLGeocoder().reverseGeocodeLocation(CLLocation(latitude: destinationCoordinates.latitude, longitude: destinationCoordinates.longitude)) {  placemark, error in
+               if let error = error as? CLError {
+                   print("CLError:", error)
+                   return
+                }
+               else if let placemark = placemark?[0] {
+                
+                var placeName = ""
+                var neighbourhood = ""
+                var city = ""
+                var state = ""
+                var postalCode = ""
+                var country = ""
+                
+                
+                if let name = placemark.name {
+                    placeName += name
+                            }
+                if let sublocality = placemark.subLocality {
+                    neighbourhood += sublocality
+                            }
+                if let locality = placemark.subLocality {
+                     city += locality
+                            }
+                if let area = placemark.administrativeArea {
+                              state += area
+                          }
+                if let code = placemark.postalCode {
+                              postalCode += code
+                          }
+                if let cntry = placemark.country {
+                                        country += cntry
+                                    }
+
+                
+                
+                let place = Places(placeLat: self.destinationCoordinates.latitude, placeLong:self.destinationCoordinates.longitude, placeName: placeName, city: city, postalCode: postalCode, country: country)
+              
+                self.places?.append(place)
+                self.saveData()
+                self.navigationController?.popToRootViewController(animated: true)
+                }
+
+            }
+        }        //Adding overlays
         func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
             let renderer = MKPolylineRenderer(polyline: overlay as! MKPolyline)
             renderer.strokeColor = UIColor.blue
@@ -171,24 +310,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             return renderer
         }
         
-            //Zoom in feature
-            @IBAction func zoomIn(_ sender: Any)
-            {
-                var region: MKCoordinateRegion = mapView.region
-                region.span.latitudeDelta /= 2.0
-                region.span.longitudeDelta /= 2.0
-                mapView.setRegion(region, animated: true)
-            }
-        
-            //Zoom out feature
-            @IBAction func zoomOut(_ sender: Any)
-            {
-                var region: MKCoordinateRegion = mapView.region
-                region.span.latitudeDelta = min(region.span.latitudeDelta * 2.0, 180.0)
-                region.span.longitudeDelta = min(region.span.longitudeDelta * 2.0, 180.0)
-                mapView.setRegion(region, animated: true)
-            }
-            
             func getLocationInfo()
             {
                 var location = CLLocation(latitude: aLat as! CLLocationDegrees, longitude: aLon as! CLLocationDegrees) //changed!!!
@@ -214,35 +335,37 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
 
     extension ViewController: MKMapViewDelegate {
-            func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView?
-            {
-                //Show nothing if loction is user's location
+             func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
                 
-                if annotation is MKUserLocation {
-                    return nil
-                }
                 
-                //Adding a custom pin
-                let pinAnnotation = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "droppablePin")
-                pinAnnotation.pinTintColor = UIColor.systemPink
-                pinAnnotation.canShowCallout = true
+                        if annotation is MKUserLocation {
+                            return nil
+                        }
+                    
+                            let pinAnnotation = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "marker")
+                            pinAnnotation.markerTintColor = .systemPink
+                            pinAnnotation.glyphTintColor = .white
+                            pinAnnotation.canShowCallout = true
+                    
+                            button.setImage(UIImage(systemName: "star.fill"), for: .normal)
+                            button.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+                            pinAnnotation.rightCalloutAccessoryView = button
+                            return pinAnnotation
                 
-                //Adding custom button
-                let button = UIButton()
-                button.setImage(UIImage(named :"heart")?.withRenderingMode(.alwaysTemplate), for: .normal)
-                button.frame = CGRect(x: 0, y: 0, width: 32, height: 32)
-                pinAnnotation.rightCalloutAccessoryView = button
+                    }
                 
-                return pinAnnotation
-            }
 
-            func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl)
-            {
-                //Alert user that he has successfully added the location
-                let alertController = UIAlertController(title: "Success", message: "Location Added to favorites", preferredStyle: .alert)
-                let cancelAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-                alertController.addAction(cancelAction)
-                present(alertController, animated: true, completion: nil)
+            func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+                 let alertController = UIAlertController(title: "Add to Favourites", message:
+                    "Do you want to add marked Location to favourites?", preferredStyle: .actionSheet)
+                alertController.addAction(UIAlertAction(title: "Yes", style:  .default, handler: { (UIAlertAction) in
+                    self.geocode()
+                    
+                }))
+            
+                alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                    self.present(alertController, animated: true, completion: nil)
+                            
             }
     }
 
