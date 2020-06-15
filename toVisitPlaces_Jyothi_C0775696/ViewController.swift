@@ -135,7 +135,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                                
                                 let annotation = MKPointAnnotation()
                                 annotation.coordinate = self.destinationCoordinates!
-                                annotation.title = "Your destination"
+                                annotation.title = "Your selected Place"
                                 self.mapView.addAnnotation(annotation)
                            }
                        }
@@ -179,7 +179,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 annotation.coordinate = location
                 aLat = annotation.coordinate.latitude
                 aLon = annotation.coordinate.longitude
-                annotation.title = "Destination"
+                annotation.title = "Your Selected Place"
                 
                 self.mapView.addAnnotation(annotation)
             }
@@ -225,26 +225,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                     request.destination = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: aLat as! CLLocationDegrees, longitude: aLon as! CLLocationDegrees), addressDictionary: nil))
                     request.requestsAlternateRoutes = false
             }
-            //Transport type based on segment selection
-            switch segmentWay.selectedSegmentIndex
-            {
-                case 0:
-                    request.transportType = .walking
-                case 1:
-                    request.transportType = .automobile
-                default:
-                    break
-            }
-            let directions = MKDirections(request: request)
 
-            directions.calculate { [unowned self] response, error in
-                guard let unwrappedResponse = response else { return }
-
-                for route in unwrappedResponse.routes {
-                    self.mapView.addOverlay(route.polyline)
-                    self.mapView.setVisibleMapRect(route.polyline.boundingMapRect, animated: true)
-                }
-            }
         }
     func geocode()  {
             CLGeocoder().reverseGeocodeLocation(CLLocation(latitude: destinationCoordinates.latitude, longitude: destinationCoordinates.longitude)) {  placemark, error in
